@@ -3,119 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MVP 戰情室 | 管理系統</title>
+    <title>MVP 管理系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
-        body { 
-            background: radial-gradient(circle at top, #0f172a 0%, #020617 100%); 
-            color: #f8fafc; 
-            font-family: 'Noto Sans TC', sans-serif; 
-            min-height: 100vh;
-        }
-        .glass { 
-            background: rgba(255, 255, 255, 0.03); 
-            backdrop-filter: blur(15px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-        }
-    </style>
 </head>
-<body class="flex items-center justify-center p-6">
-
-    <div id="loginOverlay" class="fixed inset-0 flex items-center justify-center bg-[#020617] z-50">
-        <div class="glass p-10 rounded-[2.5rem] w-full max-w-sm text-center shadow-2xl">
-            <div class="bg-sky-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-sky-500/20">
-                <i class="fa-solid fa-shield-halved text-white text-2xl"></i>
-            </div>
-            <h2 class="text-2xl font-black mb-6 tracking-tighter">系統管理登入</h2>
-            <div class="space-y-4">
-                <input type="text" id="user" placeholder="帳號" class="w-full bg-slate-900 border border-white/10 p-4 rounded-xl text-white focus:outline-none focus:border-sky-500 transition-all">
-                <input type="password" id="pass" placeholder="密碼" class="w-full bg-slate-900 border border-white/10 p-4 rounded-xl text-white focus:outline-none focus:border-sky-500 transition-all">
-                <button onclick="handleLogin()" class="w-full bg-sky-600 py-4 rounded-xl font-black text-white hover:bg-sky-500 active:scale-95 transition-all shadow-lg shadow-sky-600/20">進入戰情室</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="adminPanel" class="w-full max-w-2xl hidden" data-aos="fade-up">
-        <header class="flex justify-between items-center mb-10">
-            <div>
-                <h1 class="text-3xl font-black tracking-tighter">MVP <span class="text-sky-400">戰情室</span></h1>
-                <p class="text-slate-500 text-sm font-bold uppercase tracking-widest mt-1">Management Command Center</p>
-            </div>
-            <button onclick="location.reload()" class="text-slate-500 hover:text-white transition-all text-sm font-bold">登出系統</button>
-        </header>
-
-        <div class="glass p-8 rounded-[2.5rem] shadow-2xl">
-            <div class="flex items-center gap-3 mb-8">
-                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span class="text-xs font-black text-slate-400 uppercase tracking-widest">即時公告發布系統</span>
-            </div>
-
-            <div class="space-y-6">
-                <div>
-                    <label class="block text-xs font-black text-slate-500 mb-2 uppercase ml-1">公告標題</label>
-                    <input id="title" type="text" placeholder="例如：系統維修通知" class="w-full bg-slate-950 border border-white/5 p-4 rounded-2xl text-white focus:outline-none focus:border-sky-500/50 transition-all">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-black text-slate-500 mb-2 uppercase ml-1">詳細內容</label>
-                    <textarea id="content" rows="5" placeholder="請輸入要顯示在官網彈窗的詳細文字..." class="w-full bg-slate-950 border border-white/5 p-4 rounded-2xl text-white focus:outline-none focus:border-sky-500/50 transition-all resize-none"></textarea>
-                </div>
-
-                <button onclick="submitNotice()" id="sendBtn" class="w-full bg-sky-600 py-5 rounded-2xl font-black text-white hover:bg-sky-500 active:scale-95 transition-all shadow-xl shadow-sky-600/10 flex items-center justify-center gap-3">
-                    <i class="fa-solid fa-paper-plane"></i> 立即同步至官網
-                </button>
-            </div>
-        </div>
-
-        <footer class="mt-8 text-center">
-            <p class="text-[10px] text-slate-600 font-bold tracking-widest uppercase">© 2026 Toilet MVP Operation System</p>
-        </footer>
+<body class="bg-slate-900 text-white p-10">
+    <div class="max-w-md mx-auto bg-slate-800 p-8 rounded-2xl shadow-xl">
+        <h1 class="text-2xl font-bold mb-6">系統管理</h1>
+        <input type="text" id="user" placeholder="帳號" class="w-full p-3 mb-4 bg-slate-700 rounded-lg text-white">
+        <input type="password" id="pass" placeholder="密碼" class="w-full p-3 mb-6 bg-slate-700 rounded-lg text-white">
+        <button onclick="login()" class="w-full bg-blue-600 p-3 rounded-lg font-bold">進入</button>
     </div>
 
     <script>
-        // 1. 驗證邏輯
-        function handleLogin() {
+        function login() {
             const u = document.getElementById('user').value;
             const p = document.getElementById('pass').value;
             if(u === "Admin" && p === "990926") {
-                document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('adminPanel').classList.remove('hidden');
-            } else {
-                alert("驗證失敗，請檢查帳號密碼。");
-            }
-        }
-
-        // 2. 發送邏輯 (對接你的 Google 表單)
-        async function submitNotice() {
-            const t = document.getElementById('title').value;
-            const c = document.getElementById('content').value;
-            const btn = document.getElementById('sendBtn');
-
-            if(!t || !c) return alert("請填寫完整標題與內容！");
-
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> 同步中...';
-
-            // 你的 Google 表單 Action URL 與 Entry IDs
-            const url = "https://docs.google.com/forms/d/e/1FAIpQLSd8T56O45h0Yt1H0n-Dq-lW4qD9hC5j4fQp_B6QJ9Vw6u3s-Q/formResponse";
-            const data = new FormData();
-            data.append("entry.1802956277", t); 
-            data.append("entry.1506456073", c); 
-
-            try {
-                // 使用 no-cors 模式發送
-                await fetch(url, { method: 'POST', body: data, mode: 'no-cors' });
-                alert("✅ 公告已發布！官網將在 30 秒內自動更新。");
-                document.getElementById('title').value = '';
-                document.getElementById('content').value = '';
-            } catch (e) {
-                alert("發布失敗，請確認網路連線。");
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> 立即同步至官網';
-            }
+                alert("登入成功！");
+                document.body.innerHTML = '<div class="max-w-md mx-auto bg-slate-800 p-8 rounded-2xl"><h1>進入後台成功</h1></div>';
+            } else { alert("錯誤"); }
         }
     </script>
 </body>
